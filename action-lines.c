@@ -1,0 +1,171 @@
+/* This file is an image processing operation for GEGL
+ *
+ * GEGL is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * GEGL is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with GEGL; if not, see <https://www.gnu.org/licenses/>.
+ *
+ * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * 2022 Beaver (Action Lines)
+ */
+
+#include "config.h"
+#include <glib/gi18n-lib.h>
+
+#ifdef GEGL_PROPERTIES
+
+property_double (movex, _("Center X"), 0.50)
+  description (_("X coordinates of the center of lines"))
+  ui_range (0.40, 0.60)
+  ui_meta  ("unit", "relative-coordinate")
+  ui_meta  ("axis", "x")
+
+property_double (movey, _("Center Y"), 0.50)
+  description (_("Y coordinates of the center of lines"))
+  ui_range (0.40, 0.60)
+  ui_meta  ("unit", "relative-coordinate")
+  ui_meta  ("axis", "y")
+
+property_color (alpha, _("Color"), "#000000")
+    description(_("Select color of the lines."))
+
+property_int (radius, _("Radius"), 3200)
+  description (_("Radius of Action Lines"))
+  value_range (2000, 10000)
+  ui_range (2000, 12000)
+  ui_meta  ("unit", "pixel-distance")
+
+property_int (lines, _("Number of lines"), 700)
+  description (_("Number of lines"))
+  value_range (480, 1024)
+  ui_range (480, 1024)
+
+
+property_seed (seed, _("Random seed"), rand)
+  description (_("The random seed for lines"))
+
+property_double (th, _("Threshold alpha meter"), 0.40)
+  value_range (0.3, 0.5)
+  ui_range (0.3, 0.5)
+
+property_int    (oil, _("Smooth line"), 1)
+    description (_("Smooth the edges"))
+    value_range (1, 4)
+    ui_range (1, 4)
+    ui_meta     ("unit", "pixel-distance")
+
+
+
+
+#else
+
+#define GEGL_OP_META
+#define GEGL_OP_NAME     actionlines
+#define GEGL_OP_C_SOURCE action-lines.c
+
+#include "gegl-op.h"
+
+static void attach (GeglOperation *operation)
+{
+  GeglNode *gegl = operation->node;
+  GeglNode *input, *output, *c2a, *col, *oil, *th, *lines;
+
+  input    = gegl_node_get_input_proxy (gegl, "input");
+  output   = gegl_node_get_output_proxy (gegl, "output");
+
+
+  c2a = gegl_node_new_child (gegl,
+                                  "operation", "gegl:color-to-alpha",
+                                  NULL);
+
+
+
+   lines = gegl_node_new_child (gegl,
+                                  "operation", "gegl:supernova",
+                                  NULL);
+
+  col = gegl_node_new_child (gegl,
+                                  "operation", "gegl:color-overlay",
+                                  NULL);
+
+
+  th = gegl_node_new_child (gegl,
+                                  "operation", "gimp:threshold-alpha",
+                                  NULL);
+
+
+  oil = gegl_node_new_child (gegl,
+                                  "operation", "gegl:oilify",
+                                  NULL);
+
+
+
+
+  gegl_operation_meta_redirect (operation, "radius", lines, "radius");
+
+  gegl_operation_meta_redirect (operation, "seed", lines, "seed");
+
+  gegl_operation_meta_redirect (operation, "lines", lines, "spokes-count");
+
+  gegl_operation_meta_redirect (operation, "movex", lines, "center-x");
+
+  gegl_operation_meta_redirect (operation, "movey", lines, "center-y");
+
+
+
+
+  gegl_operation_meta_redirect (operation, "alpha", col, "value");
+
+
+  gegl_operation_meta_redirect (operation, "alpha2", col, "opacity-threshold");
+
+
+
+  gegl_operation_meta_redirect (operation, "th", th, "value");
+
+
+
+  gegl_operation_meta_redirect (operation, "oil", oil, "mask-radius");
+
+
+
+
+
+
+
+
+  gegl_node_link_many (input, lines, c2a, col, th, oil, output, NULL);
+
+
+
+
+}
+
+static void
+gegl_op_class_init (GeglOpClass *klass)
+{
+  GeglOperationClass *operation_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+
+  operation_class->attach = attach;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name",        "gegl:action-lines",
+    "title",       _("Action Lines"),
+    "categories",  "Aristic",
+    "reference-hash", "45ed5656a28f25j0f0f25sb2ac",
+    "description", _("Make an action line effect using GEGL "
+                     ""),
+    NULL);
+}
+
+#endif
