@@ -3,7 +3,7 @@ action lines
 
 A custom GEGL operation (and by extension GIMP filter) that makes action lines
 
-
+![image preview](preview_action_lines.png)
 
 ## Compiling and Installing
 
