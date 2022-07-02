@@ -52,9 +52,11 @@ property_int (lines, _("Number of lines"), 700)
 property_seed (seed, _("Random seed"), rand)
   description (_("The random seed for lines"))
 
-property_double (th, _("Threshold alpha meter"), 0.40)
-  value_range (0.3, 0.5)
-  ui_range (0.3, 0.5)
+property_double (opacity, _("Opacity Increasement"), 2.0)
+    description (_("Global opacity value that is always used on top of the optional auxiliary input buffer."))
+    value_range (0.6, 3.0)
+    ui_range    (0.6, 3.0)
+
 
 property_int    (oil, _("Smooth line"), 1)
     description (_("Smooth the edges"))
@@ -98,7 +100,7 @@ static void attach (GeglOperation *operation)
 
 
   th = gegl_node_new_child (gegl,
-                                  "operation", "gimp:threshold-alpha",
+                                  "operation", "gegl:opacity",
                                   NULL);
 
 
@@ -129,8 +131,7 @@ static void attach (GeglOperation *operation)
 
 
 
-  gegl_operation_meta_redirect (operation, "th", th, "value");
-
+    gegl_operation_meta_redirect (operation, "opacity", th, "value");
 
 
   gegl_operation_meta_redirect (operation, "oil", oil, "mask-radius");
