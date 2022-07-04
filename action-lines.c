@@ -43,10 +43,10 @@ property_int (radius, _("Radius"), 3200)
   ui_range (2000, 12000)
   ui_meta  ("unit", "pixel-distance")
 
-property_int (lines, _("Number of lines"), 700)
-  description (_("Number of lines"))
-  value_range (480, 1024)
-  ui_range (480, 1024)
+property_int (lines, _("Increase lines and rotate"), 700)
+  description (_("Adds more lines and rotates the effect "))
+  value_range (380, 1024)
+  ui_range (380, 1024)
 
 
 property_seed (seed, _("Random seed"), rand)
