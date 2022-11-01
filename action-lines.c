@@ -40,7 +40,7 @@ property_color (alpha, _("Color"), "#000000")
 property_int (radius, _("Radius"), 3200)
   description (_("Radius of Action Lines"))
   value_range (800, 10000)
-  ui_range (2000, 12000)
+  ui_range (2000, 10000)
   ui_meta  ("unit", "pixel-distance")
 
 property_int (lines, _("Increase lines and rotate"), 700)
