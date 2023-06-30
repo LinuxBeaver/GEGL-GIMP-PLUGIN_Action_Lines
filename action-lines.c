@@ -16,6 +16,18 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  * 2022 Beaver (Action Lines)
  */
+/*
+June 25 2023 Recreation of GEGL Graph. You can test a static version of this
+plugin without installing it by running this syntax in Gimp's GEGL graph plugin.
+
+supernova radius=1200 seed=4422 spokes-count=750 
+box-blur radius=1
+color-to-alpha color=#ffffff
+
+color-overlay value=#001bff
+opacity value=3
+
+ */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
@@ -24,23 +36,23 @@
 
 property_double (movex, _("Center X"), 0.50)
   description (_("X coordinates of the center of lines"))
-  ui_range (0.40, 0.60)
+  ui_range (0.20, 0.80)
   ui_meta  ("unit", "relative-coordinate")
   ui_meta  ("axis", "x")
 
 property_double (movey, _("Center Y"), 0.50)
   description (_("Y coordinates of the center of lines"))
-  ui_range (0.40, 0.60)
+  ui_range (0.20, 0.80)
   ui_meta  ("unit", "relative-coordinate")
   ui_meta  ("axis", "y")
 
-property_color (alpha, _("Color"), "#000000")
+property_color (color, _("Color"), "#000000")
     description(_("Select color of the lines."))
 
 property_int (radius, _("Radius"), 3200)
   description (_("Radius of Action Lines"))
   value_range (800, 10000)
-  ui_range (2000, 10000)
+  ui_range (1000, 10000)
   ui_meta  ("unit", "pixel-distance")
 
 property_int (lines, _("Increase lines and rotate"), 700)
@@ -58,14 +70,6 @@ property_double (opacity, _("Opacity Increasement"), 2.0)
     ui_range    (0.6, 3.0)
 
 
-property_int    (oil, _("Smooth line"), 1)
-    description (_("Smooth the edges"))
-    value_range (1, 4)
-    ui_range (1, 4)
-    ui_meta     ("unit", "pixel-distance")
-
-
-
 
 #else
 
@@ -78,7 +82,7 @@ property_int    (oil, _("Smooth line"), 1)
 static void attach (GeglOperation *operation)
 {
   GeglNode *gegl = operation->node;
-  GeglNode *input, *output, *c2a, *col, *oil, *th, *lines;
+  GeglNode *input, *output, *c2a, *col, *oil, *th, *lines, *blurnova;
 
   input    = gegl_node_get_input_proxy (gegl, "input");
   output   = gegl_node_get_output_proxy (gegl, "output");
@@ -104,46 +108,21 @@ static void attach (GeglOperation *operation)
                                   NULL);
 
 
-  oil = gegl_node_new_child (gegl,
-                                  "operation", "gegl:oilify",
+  blurnova = gegl_node_new_child (gegl,
+                                  "operation", "gegl:box-blur", "radius", 1,
                                   NULL);
 
 
-
-
   gegl_operation_meta_redirect (operation, "radius", lines, "radius");
-
   gegl_operation_meta_redirect (operation, "seed", lines, "seed");
-
   gegl_operation_meta_redirect (operation, "lines", lines, "spokes-count");
-
   gegl_operation_meta_redirect (operation, "movex", lines, "center-x");
-
   gegl_operation_meta_redirect (operation, "movey", lines, "center-y");
+  gegl_operation_meta_redirect (operation, "color", col, "value");
+  gegl_operation_meta_redirect (operation, "opacity", th, "value");
 
 
-
-
-  gegl_operation_meta_redirect (operation, "alpha", col, "value");
-
-
-  gegl_operation_meta_redirect (operation, "alpha2", col, "opacity-threshold");
-
-
-
-    gegl_operation_meta_redirect (operation, "opacity", th, "value");
-
-
-  gegl_operation_meta_redirect (operation, "oil", oil, "mask-radius");
-
-
-
-
-
-
-
-
-  gegl_node_link_many (input, lines, c2a, col, th, oil, output, NULL);
+  gegl_node_link_many (input, lines, blurnova, c2a, col, th, output, NULL);
 
 
 
