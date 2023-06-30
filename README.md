@@ -2,9 +2,7 @@ action lines
 =========
 
 A custom GEGL operation (and by extension GIMP filter) that makes action lines
-
-![image preview](preview_action_lines.png)
-
+![image](https://github.com/LinuxBeaver/GEGL-Action-Lines/assets/78667207/90d098a7-d509-43a4-8491-44e699826338)
 
 
 ## OS specific location to put GEGL Filter binaries 
