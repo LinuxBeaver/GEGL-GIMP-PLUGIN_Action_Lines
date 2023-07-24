@@ -82,7 +82,7 @@ property_double (opacity, _("Opacity Increasement"), 2.0)
 static void attach (GeglOperation *operation)
 {
   GeglNode *gegl = operation->node;
-  GeglNode *input, *output, *c2a, *col, *oil, *th, *lines, *blurnova;
+  GeglNode *input, *output, *c2a, *col, *th, *lines, *blurnova;
 
   input    = gegl_node_get_input_proxy (gegl, "input");
   output   = gegl_node_get_output_proxy (gegl, "output");
@@ -145,6 +145,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "reference-hash", "45ed5656a28f25j0f0f25sb2ac",
     "description", _("Make an action line effect using GEGL "
                      ""),
+    "gimp:menu-path", "<Image>/Filters/Render/Fun",
+    "gimp:menu-label", _("Action Lines..."),
     NULL);
 }
 
