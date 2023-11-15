@@ -139,9 +139,8 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->attach = attach;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:action-lines",
+    "name",        "lb:action-lines",
     "title",       _("Action Lines"),
-    "categories",  "Aristic",
     "reference-hash", "45ed5656a28f25j0f0f25sb2ac",
     "description", _("Make an action line effect using GEGL "
                      ""),
