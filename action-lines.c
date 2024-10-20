@@ -82,7 +82,7 @@ property_double (opacity, _("Opacity Increasement"), 2.0)
 static void attach (GeglOperation *operation)
 {
   GeglNode *gegl = operation->node;
-  GeglNode *input, *output, *c2a, *col, *th, *lines, *blurnova;
+  GeglNode *input, *output, *c2a, *crop, *col, *th, *lines, *blurnova;
 
   input    = gegl_node_get_input_proxy (gegl, "input");
   output   = gegl_node_get_output_proxy (gegl, "output");
@@ -112,6 +112,11 @@ static void attach (GeglOperation *operation)
                                   "operation", "gegl:box-blur", "radius", 1,
                                   NULL);
 
+  crop = gegl_node_new_child (gegl,
+                                  "operation", "gegl:crop",
+                                  NULL);
+
+
 
   gegl_operation_meta_redirect (operation, "radius", lines, "radius");
   gegl_operation_meta_redirect (operation, "seed", lines, "seed");
@@ -122,8 +127,8 @@ static void attach (GeglOperation *operation)
   gegl_operation_meta_redirect (operation, "opacity", th, "value");
 
 
-  gegl_node_link_many (input, lines, blurnova, c2a, col, th, output, NULL);
-
+  gegl_node_link_many (input, lines, blurnova, c2a, col, th, crop, output, NULL);
+  gegl_node_connect (crop, "aux", input, "output");
 
 
 
