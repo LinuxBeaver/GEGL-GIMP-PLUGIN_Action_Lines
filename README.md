@@ -1,9 +1,8 @@
-action lines
+Action lines
 =========
 
 A custom GEGL operation (and by extension GIMP filter) that makes action lines
 ![image](https://github.com/LinuxBeaver/GEGL-Action-Lines/assets/78667207/90d098a7-d509-43a4-8491-44e699826338)
-
 
 ## OS specific location to put GEGL Filter binaries 
 
@@ -11,13 +10,14 @@ Windows
  C:\\Users\<YOUR NAME>\AppData\Local\gegl-0.4\plug-ins
  
  Linux 
- /home/(USERNAME)/.local/share/gegl-0.4/plug-ins
+`~/.local/share/gegl-0.4/plug-ins`
  
  Linux (Flatpak)
- /home/(USERNAME)/.var/app/org.gimp.GIMP/data/gegl-0.4/plug-ins
+`~/.var/app/org.gimp.GIMP/data/gegl-0.4/plug-ins`
 
 
 ## Compiling and Installing
+Simply run build_plugin_linux/windows.sh - to understand what it does manually read this
 
 ### Linux
 
@@ -32,8 +32,6 @@ ninja -C build
 
 If you have an older version of gegl you may need to copy to `~/.local/share/gegl-0.3/plug-ins`
 instead (on Ubuntu 18.04 for example).
-
-
 
 ### Windows
 
@@ -54,5 +52,8 @@ meson setup --buildtype=release build
 ninja -C build
 ```
 
+## Previews of this based plugin
+
+![image](https://raw.githubusercontent.com/LinuxBeaver/GEGL-GIMP-PLUGIN_Action_Lines/main/preview_action_lines.png)
 
 
